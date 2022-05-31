@@ -4,6 +4,7 @@ namespace DAL.Models.Common
 {
     public class AppConfigration
     {
+        public string SecretJwt { get; set; }
         public string SqlConnectionString { get; set; }
 
         public AppConfigration()
@@ -17,6 +18,7 @@ namespace DAL.Models.Common
 
             #endregion Init
 
+            SecretJwt = root.GetSection("Secret:Jwt").Value;
             SqlConnectionString = root.GetSection("ConnectionStrings:DefaultConnection").Value;
         }
     }

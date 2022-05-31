@@ -9,8 +9,5 @@ namespace DAL.Models.Common
 
         [Required]
         public string Password { get; set; }
-
-        [Required]
-        public long RoleId { get; set; }
     }
 }

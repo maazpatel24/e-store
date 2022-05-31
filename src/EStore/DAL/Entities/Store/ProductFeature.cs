@@ -16,16 +16,17 @@ namespace DAL.Entities.Store
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [Column(TypeName = nameof(DbType.Currency))]
+        [Column(TypeName = nameof(SqlDbType.Money))]
         [DefaultValue(0.0d)]
         public double Discount { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime? CreatedAt { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
         [DefaultValue(null)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? UpdatedAt { get; set; }
 
         [DefaultValue(false)]

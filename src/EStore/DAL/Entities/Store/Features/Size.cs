@@ -15,19 +15,20 @@ namespace DAL.Entities.Store.Features
 
         [Required]
         [MinLength(3), MaxLength(128)]
-        [Column(TypeName = nameof(DbType.String))]
+        [Column(TypeName = nameof(SqlDbType.NVarChar))]
         public string Name { get; set; }
 
         [MinLength(3), MaxLength(256)]
-        [Column(TypeName = nameof(DbType.String))]
+        [Column(TypeName = nameof(SqlDbType.NVarChar))]
         public string Description { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime? CreatedAt { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
         [DefaultValue(null)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? UpdatedAt { get; set; }
 
         [DefaultValue(false)]

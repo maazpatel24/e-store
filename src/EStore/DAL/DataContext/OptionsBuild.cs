@@ -17,5 +17,11 @@ namespace DAL.DataContext
             OptionsBuilder.EnableSensitiveDataLogging(true);
             DatabaseOptions = OptionsBuilder.Options;
         }
+
+        public static void OptionsConfigure(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(new AppConfigration().SqlConnectionString);
+            options.EnableSensitiveDataLogging(true);
+        }
     }
 }

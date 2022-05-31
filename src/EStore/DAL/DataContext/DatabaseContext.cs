@@ -18,6 +18,12 @@ namespace DAL.DataContext
 
         public static OptionsBuild Options = new OptionsBuild();
 
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            // connect to sql server with connection string from app settings
+            OptionsBuild.OptionsConfigure(options);
+        }
+
         #region DbSets
 
         #region Login

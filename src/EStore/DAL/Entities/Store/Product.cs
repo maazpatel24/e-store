@@ -17,23 +17,24 @@ namespace DAL.Entities.Store
 
         [Required]
         [MinLength(3), MaxLength(128)]
-        [Column(TypeName = nameof(DbType.String))]
+        [Column(TypeName = nameof(SqlDbType.NVarChar))]
         public string Name { get; set; }
 
         [MinLength(3), MaxLength(256)]
-        [Column(TypeName = nameof(DbType.String))]
+        [Column(TypeName = nameof(SqlDbType.NVarChar))]
         public string Description { get; set; }
 
         [Required]
-        [Column(TypeName = nameof(DbType.Currency))]
+        [Column(TypeName = nameof(SqlDbType.Money))]
         public double Price { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime? CreatedAt { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
         [DefaultValue(null)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? UpdatedAt { get; set; }
 
         [DefaultValue(false)]
@@ -45,7 +46,7 @@ namespace DAL.Entities.Store
 
         public virtual Marka Marka { get; set; }
 
-        [InverseProperty("ProductId")]
+        [InverseProperty("Product")]
         public virtual List<ProductFeature> Features { get; set; } = new List<ProductFeature>();
     }
 }

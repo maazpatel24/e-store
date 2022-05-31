@@ -16,12 +16,13 @@ namespace DAL.Entities.Login
         public long Id { get; set; }
 
         [Required]
-        [Column(TypeName = nameof(DbType.AnsiString))]
+        [Column(TypeName = nameof(SqlDbType.VarChar))]
         [MinLength(3), MaxLength(128)]
         public string Username { get; set; }
 
         [Required]
-        [Column(TypeName = nameof(DbType.AnsiString))]
+        [Column(TypeName = "VarChar(256)")]
+        //[Column(TypeName = nameof(SqlDbType.VarChar))]
         public string Token { get; set; }
 
         [Required]
@@ -32,12 +33,13 @@ namespace DAL.Entities.Login
         [Exclude]
         public byte[] PasswordSalt { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime? CreatedAt { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
         [DefaultValue(null)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? UpdatedAt { get; set; }
 
         [DefaultValue(false)]

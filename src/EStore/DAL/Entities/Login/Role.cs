@@ -17,21 +17,22 @@ namespace DAL.Entities.Login
 
         [Required]
         [MinLength(3), MaxLength(128)]
-        [Column(TypeName = nameof(DbType.AnsiString))]
+        [Column(TypeName = nameof(SqlDbType.VarChar))]
         public string Name { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime? CreatedAt { get; set; }
 
-        [Column(TypeName = nameof(DbType.DateTime))]
+        [Column(TypeName = nameof(SqlDbType.DateTime))]
         [DefaultValue(null)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? UpdatedAt { get; set; }
 
         [DefaultValue(false)]
         public bool IsDeleted { get; set; }
 
-        [InverseProperty("RoleId")]
+        [InverseProperty("Role")]
         public virtual List<User> Users { get; set; } = new List<User>();
     }
 
