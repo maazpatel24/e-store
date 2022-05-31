@@ -24,11 +24,11 @@ namespace API.Controllers.Login
 {
     public class UserController : BaseApiController<User>
     {
-        private readonly AppSettings _appSettings;
+        private readonly AppConfigration _appConfigration;
         private readonly IBusiness<Session> _sessionBusiness;
-        public UserController(IBusiness<User> business, ILogger<BaseApiController<User>> logger, IActionContextAccessor accessor, IOptions<AppSettings> options, IBusiness<Session> sessionBusiness) : base(business, logger, accessor)
+        public UserController(IBusiness<User> business, ILogger<BaseApiController<User>> logger, IActionContextAccessor accessor, IOptions<AppConfigration> options, IBusiness<Session> sessionBusiness) : base(business, logger, accessor)
         {
-            _appSettings = options.Value;
+            _appConfigration = options.Value;
             _sessionBusiness = sessionBusiness;
         }
 
@@ -74,7 +74,7 @@ namespace API.Controllers.Login
         {
             expires = DateTime.UtcNow.AddDays(7);
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_appConfigration.SecretJwt);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[] { new Claim("id", id.ToString()), new Claim("role", role.ToString()) }),
