@@ -36,21 +36,30 @@ namespace DAL.Models.Api
         }
     }
 
-    public class ApiResult<TEntity> : ApiResult
-        where TEntity : BaseEntity, IEntity
+    public class ApiResult<T> 
+        where T : class
     {
+        public bool Success { get; set; }
+        public T Data { get; set; }
+        public ErrorResult Error { get; set; }
+
+
         public ApiResult()
         {
         }
 
-        public ApiResult(bool success, object data, ErrorResult error) : base(success, data, error)
+        public ApiResult(bool success, T data, ErrorResult error) 
         {
+            this.Success = success;
             this.Data = data;
+            this.Error = error;
         }
 
-        public ApiResult(bool success, object data, int errorCode, string errorMessage) : base(success, data, errorCode, errorMessage)
+        public ApiResult(bool success, T data, int errorCode, string errorMessage) 
         {
+            this.Success = success;
             this.Data = data;
+            this.Error = new ErrorResult(errorCode, errorMessage);
         }
 
         public override string ToString()

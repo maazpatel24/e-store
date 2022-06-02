@@ -1,5 +1,6 @@
 ﻿using COMN.Attributes;
 using DAL.Entities.Base;
+using DAL.Entities.Store;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ using System.Data;
 namespace DAL.Entities.Login
 {
     [Table("Users")]
-    [Include("Role")]
+    [Include("Role", "Comments")]
     public class User : BaseEntity
     {
         [Key]
@@ -22,7 +23,6 @@ namespace DAL.Entities.Login
 
         [Required]
         [Column(TypeName = "VarChar(256)")]
-        //[Column(TypeName = nameof(SqlDbType.VarChar))]
         public string Token { get; set; }
 
         [Required]
@@ -50,5 +50,8 @@ namespace DAL.Entities.Login
         public long RoleId { get; set; }
 
         public virtual Role Role { get; set; }
+
+        [InverseProperty("User")]
+        public virtual List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

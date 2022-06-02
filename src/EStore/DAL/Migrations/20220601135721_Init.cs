@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -10,7 +9,6 @@ namespace DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var timer = Stopwatch.StartNew();
             migrationBuilder.CreateTable(
                 name: "Colors",
                 columns: table => new
@@ -167,6 +165,58 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "NVarChar(128)", maxLength: 128, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "0"),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "0"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sessions",
                 columns: table => new
                 {
@@ -187,6 +237,57 @@ namespace DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "OrderProducts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<long>(type: "bigint", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderProducts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderProducts_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderProducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_ProductId",
+                table: "Comments",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProducts_OrderId",
+                table: "OrderProducts",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProducts_ProductId",
+                table: "OrderProducts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductFeatures_ColorId",
@@ -217,20 +318,24 @@ namespace DAL.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
-
-            timer.Stop();
-            Console.WriteLine($"Init (Up) Completed in {timer.Elapsed.ToString("HH:mm:ss.ffffff")}");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            var timer = Stopwatch.StartNew();
+            migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "OrderProducts");
 
             migrationBuilder.DropTable(
                 name: "ProductFeatures");
 
             migrationBuilder.DropTable(
                 name: "Sessions");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Colors");
@@ -249,9 +354,6 @@ namespace DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            timer.Stop();
-            Console.WriteLine($"Init (Down) Completed in {timer.Elapsed.ToString("HH:mm:ss.ffffff")}");
         }
     }
 }

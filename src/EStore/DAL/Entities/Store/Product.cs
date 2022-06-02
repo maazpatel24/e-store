@@ -8,7 +8,7 @@ using System.Data;
 namespace DAL.Entities.Store
 {
     [Table("Products")]
-    [Include("Marka, ProductFeature")]
+    [Include("Marka", "Features", "Comments")]
     public class Product : BaseEntity
     {
         [Key]
@@ -48,5 +48,8 @@ namespace DAL.Entities.Store
 
         [InverseProperty("Product")]
         public virtual List<ProductFeature> Features { get; set; } = new List<ProductFeature>();
+
+        [InverseProperty("Product")]
+        public virtual List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

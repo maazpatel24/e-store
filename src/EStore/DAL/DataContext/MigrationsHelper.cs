@@ -1,5 +1,4 @@
 ﻿using DAL.Entities.Store;
-using DAL.Entities.Store.Features;
 using DAL.Models.Common;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
@@ -8,25 +7,37 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-#nullable disable
-
-namespace DAL.Migrations
+namespace DAL.DataContext
 {
-    public partial class FakeSeeding : Migration
+    public class MigrationsHelper
     {
         private static readonly AppConfigration _appConfigration = new AppConfigration();
-        protected override void Up(MigrationBuilder migrationBuilder)
+
+        public static void SeedingUp(MigrationBuilder migrationBuilder)
         {
             var timer = Stopwatch.StartNew();
             Login(migrationBuilder);
             Store(migrationBuilder);
             timer.Stop();
-            Console.WriteLine($"FakeSeeding (Up) Completed in {timer.Elapsed.ToString("HH:mm:ss.ffffff")}");
+            Console.WriteLine($"MigrationsHelper.SeedingUp() Completed in {timer.Elapsed.ToString("c")}");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+        public static void SeedingDown(MigrationBuilder migrationBuilder)
         {
             var timer = Stopwatch.StartNew();
+            TruncateAllTables(migrationBuilder);
+            timer.Stop();
+            Console.WriteLine($"MigrationsHelper.SeedingDown() Completed in {timer.Elapsed.ToString("c")}");
+        }
+
+        #region Helpers
+        private static void TruncateAllTables(MigrationBuilder migrationBuilder)
+        {
+            var timer = Stopwatch.StartNew();
+            migrationBuilder.Sql("DELETE FROM OrderProducts", true);
+            migrationBuilder.Sql("DELETE FROM Orders", true);
+            migrationBuilder.Sql("DELETE FROM Comments", true);
+
             migrationBuilder.Sql("DELETE FROM ProductFeatures", true);
             migrationBuilder.Sql("DELETE FROM Products", true);
             migrationBuilder.Sql("DELETE FROM Markas", true);
@@ -37,12 +48,13 @@ namespace DAL.Migrations
             migrationBuilder.Sql("DELETE FROM Users", true);
             migrationBuilder.Sql("DELETE FROM Roles", true);
             timer.Stop();
-            Console.WriteLine($"FakeSeeding (Down) Completed in {timer.Elapsed.ToString("HH:mm:ss.ffffff")}");
+            Console.WriteLine($"MigrationsHelper.TruncateTables() Completed in {timer.Elapsed.ToString("c")}");
         }
 
-        #region Helpers
-        private void Login(MigrationBuilder migrationBuilder)
+        private static void Login(MigrationBuilder migrationBuilder)
         {
+            var random = new Random();
+
             // Roles
             AddRole(migrationBuilder, 1, "SysAdmin");
             AddRole(migrationBuilder, 2, "Admin");
@@ -52,13 +64,18 @@ namespace DAL.Migrations
             AddUser(migrationBuilder, 1, "sysadmin", "sysadmin123", 1, "SysAdmin");
             AddUser(migrationBuilder, 2, "admin", "admin123", 2, "Admin");
             AddUser(migrationBuilder, 3, "customer", "customer123", 3, "Customer");
+            for (int i = 4; i <= 20; i++)
+            {
+                AddUser(migrationBuilder, i, $"customer {random.Next(10, 99)}", "customer123", 3, "Customer");
+            }
         }
 
-        private void Store(MigrationBuilder migrationBuilder)
+        private static void Store(MigrationBuilder migrationBuilder)
         {
             var random = new Random();
 
             #region Features
+
             // Colors
             AddColor(migrationBuilder, 1, "Black", "#000000");
             AddColor(migrationBuilder, 2, "Red", "#DD0000");
@@ -74,9 +91,10 @@ namespace DAL.Migrations
             AddSize(migrationBuilder, 1, "Large", "Large");
             AddSize(migrationBuilder, 2, "Medium", "Medium");
             AddSize(migrationBuilder, 3, "Small", "Small");
-            #endregion
 
-            // Markas
+            #endregion Features
+
+            #region Markas
             var markasMaxCount = 10;
             for (int i = 1; i <= markasMaxCount; i++)
             {
@@ -91,8 +109,9 @@ namespace DAL.Migrations
                     Faker.Company.Suffix() + Environment.NewLine + paragraph
                 );
             }
+            #endregion
 
-            // Products
+            #region Products
             var prodcutsMaxCount = 50;
             var products = new List<Product>();
             for (int i = 1; i <= prodcutsMaxCount; i++)
@@ -121,8 +140,9 @@ namespace DAL.Migrations
                     product.MarkaId
                 );
             }
+            #endregion
 
-            // ProductFeatures
+            #region ProductFeatures
             for (int i = 1; i <= prodcutsMaxCount; i++)
             {
                 // Size
@@ -140,26 +160,65 @@ namespace DAL.Migrations
                     }
                 }
             }
+            #endregion
+
+            #region Comments
+            for (int i = 1; i <= prodcutsMaxCount; i++)
+            {
+                var cnt = random.Next(1, 5);
+                for (int k = 1; k <= cnt; k++)
+                {
+                    AddComment(migrationBuilder,
+                        string.Join(" ", Faker.Lorem.Words(random.Next(5, 15))),
+                        products[i - 1].Id,
+                        random.Next(2, 3)
+                    );
+                }
+            }
+            #endregion
+
+            #region Orders
+            var ordersMaxCount = 25;
+            var orders = new List<Order>();
+            for (int i = 1; i <= ordersMaxCount; i++)
+            {
+                var order = new Order { Id = i, UserId = random.Next(3, 20) };
+                orders.Add(order);
+                AddOrder(migrationBuilder, order.Id, order.UserId);
+            }
+            #endregion
+
+            #region OrderProducts
+            for (int i = 0; i < 250; i++)
+            {
+                AddOrderProduct(migrationBuilder,
+                    orders[random.Next(0, ordersMaxCount - 1)].Id,
+                    products[random.Next(0, prodcutsMaxCount - 1)].Id
+                );
+            } 
+            #endregion
         }
 
         #region Login
 
-        private void AddRole(MigrationBuilder migrationBuilder, long id, string name)
+        private static void AddRole(MigrationBuilder migrationBuilder, long id, string name)
         {
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] {
                     "Id",
                     "Name",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
                     name,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        private void AddUser(MigrationBuilder migrationBuilder, long id, string username, string pasword, long roleId, string role)
+        private static void AddUser(MigrationBuilder migrationBuilder, long id, string username, string pasword, long roleId, string role)
         {
             CreatePasswordHash(pasword, out byte[] passHash1, out byte[] passSalt1);
             migrationBuilder.InsertData(
@@ -171,6 +230,7 @@ namespace DAL.Migrations
                     "PasswordHash",
                     "PasswordSalt",
                     "RoleId",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
@@ -179,16 +239,18 @@ namespace DAL.Migrations
                     passHash1,
                     passSalt1,
                     roleId,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        #endregion
+        #endregion Login
 
         #region Store
 
         #region Features
-        private void AddColor(MigrationBuilder migrationBuilder, long id, string name, string description)
+
+        private static void AddColor(MigrationBuilder migrationBuilder, long id, string name, string description)
         {
             migrationBuilder.InsertData(
                 table: "Colors",
@@ -196,16 +258,18 @@ namespace DAL.Migrations
                     "Id",
                     "Name",
                     "Description",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
                     name,
                     description,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        private void AddSize(MigrationBuilder migrationBuilder, long id, string name, string description)
+        private static void AddSize(MigrationBuilder migrationBuilder, long id, string name, string description)
         {
             migrationBuilder.InsertData(
                 table: "Sizes",
@@ -213,18 +277,20 @@ namespace DAL.Migrations
                     "Id",
                     "Name",
                     "Description",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
                     name,
                     description,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        #endregion
+        #endregion Features
 
-        private void AddMarka(MigrationBuilder migrationBuilder, long id, string name, string description)
+        private static void AddMarka(MigrationBuilder migrationBuilder, long id, string name, string description)
         {
             migrationBuilder.InsertData(
                 table: "Markas",
@@ -232,16 +298,18 @@ namespace DAL.Migrations
                     "Id",
                     "Name",
                     "Description",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
                     name,
                     description,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        private void AddProduct(MigrationBuilder migrationBuilder, long id, string name, string description, double price, long markaId)
+        private static void AddProduct(MigrationBuilder migrationBuilder, long id, string name, string description, double price, long markaId)
         {
             migrationBuilder.InsertData(
                 table: "Products",
@@ -250,59 +318,93 @@ namespace DAL.Migrations
                     "Name",
                     "Description",
                     "Price",
-                    "MarkaId"
+                    "MarkaId",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
                     name,
                     description,
                     price,
-                    markaId
+                    markaId,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        private void AddProductFeature(MigrationBuilder migrationBuilder, long id, double discount, long productId, long colorId, long sizeId)
+        private static void AddProductFeature(MigrationBuilder migrationBuilder, double discount, long productId, long colorId, long sizeId)
         {
             migrationBuilder.InsertData(
                 table: "ProductFeatures",
                 columns: new[] {
-                    "Id",
                     "Discount",
                     "ProductId",
                     "ColorId",
                     "SizeId",
+                    "CreatedAt",
+                },
+                values: new object[] {
+                    discount,
+                    productId,
+                    colorId,
+                    sizeId,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                }
+            );
+        }
+
+        private static void AddComment(MigrationBuilder migrationBuilder, string content, long productId, long userId)
+        {
+            migrationBuilder.InsertData(
+                table: "Comments",
+                columns: new[] {
+                    "Content",
+                    "ProductId",
+                    "UserId",
+                    "CreatedAt",
+                },
+                values: new object[] {
+                    content,
+                    productId,
+                    userId,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                }
+            );
+        }
+
+        private static void AddOrder(MigrationBuilder migrationBuilder, long id, long userId)
+        {
+            migrationBuilder.InsertData(
+                table: "Orders",
+                columns: new[] {
+                    "Id",
+                    "UserId",
+                    "CreatedAt",
                 },
                 values: new object[] {
                     id,
-                    discount,
-                    productId,
-                    colorId,
-                    sizeId,
+                    userId,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                 }
             );
         }
 
-        private void AddProductFeature(MigrationBuilder migrationBuilder, double discount, long productId, long colorId, long sizeId)
+        private static void AddOrderProduct(MigrationBuilder migrationBuilder, long orderId, long productId)
         {
             migrationBuilder.InsertData(
-                table: "ProductFeatures",
+                table: "OrderProducts",
                 columns: new[] {
-                    "Discount",
+                    "OrderId",
                     "ProductId",
-                    "ColorId",
-                    "SizeId",
                 },
                 values: new object[] {
-                    discount,
+                    orderId,
                     productId,
-                    colorId,
-                    sizeId,
                 }
             );
         }
 
-        #endregion
+        #endregion Store
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
@@ -316,7 +418,7 @@ namespace DAL.Migrations
             }
         }
 
-        private string TokenGenerate(long id, string role, out DateTime expires)
+        private static string TokenGenerate(long id, string role, out DateTime expires)
         {
             expires = DateTime.UtcNow.AddDays(7);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -332,10 +434,10 @@ namespace DAL.Migrations
             return tokenHandler.WriteToken(token);
         }
 
-        #endregion
+        #endregion Helpers
     }
 
-    enum Products
+    internal enum Products
     {
         AutomotiveProduct,
         ElectronicProduct,

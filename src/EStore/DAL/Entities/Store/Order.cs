@@ -1,5 +1,6 @@
 ﻿using COMN.Attributes;
 using DAL.Entities.Base;
+using DAL.Entities.Login;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,22 +8,13 @@ using System.Data;
 
 namespace DAL.Entities.Store
 {
-    [Table("Markas")]
-    [Include("Products")]
-    public class Marka : BaseEntity
+    [Table("Orders")]
+    [Include("User", "OrderProducts")]
+    public class Order : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-
-        [Required]
-        [MinLength(3), MaxLength(128)]
-        [Column(TypeName = nameof(SqlDbType.NVarChar))]
-        public string Name { get; set; }
-
-        [MinLength(3), MaxLength(256)]
-        [Column(TypeName = nameof(SqlDbType.NVarChar))]
-        public string Description { get; set; }
 
         [Column(TypeName = nameof(SqlDbType.DateTime))]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -36,7 +28,13 @@ namespace DAL.Entities.Store
         [DefaultValue(false)]
         public bool IsDeleted { get; set; }
 
-        [InverseProperty("Marka")]
-        public virtual List<Product> Products { get; set; } = new List<Product>();
+        [InverseProperty("Order")]
+        public virtual List<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+
+        [ForeignKey("User")]
+        [Required]
+        public long UserId { get; set; }
+
+        public virtual User User { get; set; }
     }
 }

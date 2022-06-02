@@ -6,6 +6,8 @@ namespace DAL.Models.Common
     {
         public string SecretJwt { get; set; }
         public string SqlConnectionString { get; set; }
+        public string ApiBaseUrlSSL { get; set; }
+        public string ApiBaseUrl { get; set; }
 
         public AppConfigration()
         {
@@ -20,6 +22,8 @@ namespace DAL.Models.Common
 
             SecretJwt = root.GetSection("Secret:Jwt").Value;
             SqlConnectionString = root.GetSection("ConnectionStrings:DefaultConnection").Value;
+            ApiBaseUrlSSL = root.GetSection("Api:BaseUrlSSL").Value;
+            ApiBaseUrl = root.GetSection("Api:BaseUrl").Value;
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Data;
 namespace DAL.Entities.Login
 {
     [Table("Roles")]
-    [Include("User")]
+    [Include("Users")]
     public class Role : BaseEntity
     {
         [Key]

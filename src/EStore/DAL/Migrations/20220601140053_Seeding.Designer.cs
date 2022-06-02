@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220531174428_FakeSeeding")]
-    partial class FakeSeeding
+    [Migration("20220601140053_Seeding")]
+    partial class Seeding
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -129,6 +129,45 @@ namespace DAL.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Store.Comment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVarChar(128)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("DAL.Entities.Store.Features.Color", b =>
                 {
                     b.Property<long>("Id")
@@ -229,6 +268,58 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Markas");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Store.Order", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Store.OrderProduct", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderProducts");
                 });
 
             modelBuilder.Entity("DAL.Entities.Store.Product", b =>
@@ -337,6 +428,55 @@ namespace DAL.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Store.Comment", b =>
+                {
+                    b.HasOne("DAL.Entities.Store.Product", "Product")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Entities.Login.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Store.Order", b =>
+                {
+                    b.HasOne("DAL.Entities.Login.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Store.OrderProduct", b =>
+                {
+                    b.HasOne("DAL.Entities.Store.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Entities.Store.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("DAL.Entities.Store.Product", b =>
                 {
                     b.HasOne("DAL.Entities.Store.Marka", "Marka")
@@ -380,13 +520,25 @@ namespace DAL.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Login.User", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
             modelBuilder.Entity("DAL.Entities.Store.Marka", b =>
                 {
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Store.Order", b =>
+                {
+                    b.Navigation("OrderProducts");
+                });
+
             modelBuilder.Entity("DAL.Entities.Store.Product", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Features");
                 });
 #pragma warning restore 612, 618

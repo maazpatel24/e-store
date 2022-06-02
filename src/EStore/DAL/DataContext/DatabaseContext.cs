@@ -46,6 +46,9 @@ namespace DAL.DataContext
         public virtual DbSet<Marka> Markas { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductFeature> ProductFeature { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<OrderProduct> OrderProducts { get; set; }
 
         #endregion Store
 
