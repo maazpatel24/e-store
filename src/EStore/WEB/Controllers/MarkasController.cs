@@ -25,6 +25,9 @@ namespace WEB.Controllers
         [Helpers.Attributes.Authorize(Roles = "SysAdmin")]
         public async Task<ActionResult> Index()
         {
+            // Accually, we should apply paginating (on the api side) but for the limited time we taked some of results
+            // Also, we should not include the navigations properties (on the api side) in the listing results
+            // and return just the top level properties
             var markas = (await _markaService.Get().ConfigureAwait(false))?.Take(30);
             foreach (var item in markas)
             {
