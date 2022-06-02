@@ -4,9 +4,9 @@ using DAL.Repositories.Base;
 
 namespace BLL.Businesses.Store
 {
-    public class ProductBusiness : BaseBusiness<Product>
+    public class CommentBusiness : BaseBusiness<Comment>
     {
-        public ProductBusiness(IRepository<Product> repository) : base(repository)
+        public CommentBusiness(IRepository<Comment> repository) : base(repository)
         {
         }
     }

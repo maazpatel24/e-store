@@ -2,7 +2,7 @@
 using DAL.Entities.Store;
 using DAL.Repositories.Base;
 
-namespace BLL.Businesses.Login
+namespace BLL.Businesses.Store
 {
     public class ProductFeatureBusiness : BaseBusiness<ProductFeature>
     {
