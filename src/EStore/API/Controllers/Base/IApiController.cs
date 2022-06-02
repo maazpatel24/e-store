@@ -9,13 +9,13 @@ namespace API.Controllers.Base
     {
         Task<ActionResult<ApiResult<TEntity>>> Delete(long id);
 
-        Task<ActionResult<ApiResult<TEntity>>> Get();
+        Task<ActionResult<ApiResult<List<TEntity>>>> Get();
 
         Task<ActionResult<ApiResult<TEntity>>> Get(long id);
 
-        Task<ActionResult<ApiResult<TEntity>>> GetBy(string propertyName, string propertyValue);
+        Task<ActionResult<ApiResult<List<TEntity>>>> GetBy(string propertyName, string propertyValue);
 
-        Task<ActionResult<ApiResult<TEntity>>> GetBy(string propertyName, string propertyValue, string property2Name, string property2Value);
+        Task<ActionResult<ApiResult<List<TEntity>>>> GetBy(string propertyName, string propertyValue, string property2Name, string property2Value);
 
         Task<ActionResult<ApiResult<TEntity>>> Post(TEntity entity);
 

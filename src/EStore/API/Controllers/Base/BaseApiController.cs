@@ -47,10 +47,10 @@ namespace API.Controllers.Base
 
         // GET: api/[controller]
         [HttpGet]
-        public virtual async Task<ActionResult<ApiResult<TEntity>>> Get()
+        public virtual async Task<ActionResult<ApiResult<List<TEntity>>>> Get()
         {
             this._logger.LogInformation($"[Get] [{this._ip}]");
-            return Ok(new ApiResult<TEntity>(true, await this._business.GetAll().ConfigureAwait(false), null));
+            return Ok(new ApiResult<List<TEntity>>(true, await this._business.GetAll().ConfigureAwait(false), null));
         }
 
         // GET: api/[controller]/5
@@ -68,21 +68,21 @@ namespace API.Controllers.Base
 
         // GET: api/[controller]/by/id/5
         [HttpGet("by/{propertyName}/{propertyValue}")]
-        public virtual async Task<ActionResult<ApiResult<TEntity>>> GetBy([FromRoute] string propertyName, [FromRoute] string propertyValue)
+        public virtual async Task<ActionResult<ApiResult<List<TEntity>>>> GetBy([FromRoute] string propertyName, [FromRoute] string propertyValue)
         {
             this._logger.LogInformation($"[Get:by/{propertyName}/{propertyValue}] [{this._ip}]");
             var entities = await this._business.GetBy(propertyName, propertyValue).ConfigureAwait(false);
-            return Ok(new ApiResult<TEntity>(true, entities, null));
+            return Ok(new ApiResult<List<TEntity>>(true, entities, null));
         }
 
         // GET: api/[controller]/by/id/5/name/test
         [HttpGet("by/{property1Name}/{property1Value}/{property2Name}/{property2Value}")]
-        public virtual async Task<ActionResult<ApiResult<TEntity>>> GetBy(
+        public virtual async Task<ActionResult<ApiResult<List<TEntity>>>> GetBy(
             [FromRoute] string property1Name, [FromRoute] string property1Value, [FromRoute] string property2Name, [FromRoute] string property2Value)
         {
             this._logger.LogInformation($"[Get:by/{property1Name}/{property1Value}/{property2Name}/{property2Value}] [{this._ip}]");
             var entities = await this._business.GetBy(property1Name, property1Value, property2Name, property2Value).ConfigureAwait(false);
-            return Ok(new ApiResult<TEntity>(true, entities, null));
+            return Ok(new ApiResult<List<TEntity>>(true, entities, null));
         }
 
         // POST: api/[controller]

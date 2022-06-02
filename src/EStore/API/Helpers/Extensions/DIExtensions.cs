@@ -1,5 +1,6 @@
 ﻿using BLL.Businesses.Base;
 using BLL.Businesses.Login;
+using BLL.Businesses.Store;
 using DAL.Entities.Login;
 using DAL.Entities.Store;
 using DAL.Entities.Store.Features;
@@ -43,6 +44,10 @@ namespace API.Helpers.Extensions
             services.AddScoped<IBusiness<Product>, ProductBusiness>();
             services.AddScoped<IBusiness<ProductFeature>, ProductFeatureBusiness>();
 
+            services.AddScoped<IBusiness<Comment>, CommentBusiness>();
+            services.AddScoped<IBusiness<Order>, OrderBusiness>();
+            services.AddScoped<IBusiness<OrderProduct>, OrderProductBusiness>();
+
             #endregion Store
 
             #endregion Business
@@ -72,6 +77,10 @@ namespace API.Helpers.Extensions
             services.AddScoped<IRepository<Marka>, MarkaRepository>();
             services.AddScoped<IRepository<Product>, ProductRepository>();
             services.AddScoped<IRepository<ProductFeature>, ProductFeatureRepository>();
+
+            services.AddScoped<IRepository<Comment>, CommentRepository>();
+            services.AddScoped<IRepository<Order>, OrderRepository>();
+            services.AddScoped<IRepository<OrderProduct>, OrderProductRepository>();
 
             #endregion Store
 
