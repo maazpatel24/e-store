@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Users / Index";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div id="data-table" class="d-table my-3 mx-auto"></div>
+
+@section Scripts
+{
+
+<script>
+    var table, tableData = JSON.parse(`@Html.Raw(ViewData["Users"])`);
+    $(function(){
+
+        table = new Tabulator("#data-table", {
+            data:tableData,
+
+            columns:[
+                {title:"Id", field:"Id"},
+                {title:"Username", field:"Username"},
+                {title:"Role", field:"Role.Name"},
+            ],
+
+            height:"70vh",
+        });
+
+    });
+</script>
+
+}

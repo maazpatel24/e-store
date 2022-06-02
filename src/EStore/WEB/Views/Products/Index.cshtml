@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Product / Index";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div id="data-table" class="d-table my-3 mx-auto"></div>
+
+@section Scripts
+{
+
+<script>
+    var table, tableData = JSON.parse(`@Html.Raw(ViewData["Products"])`);
+    $(function(){
+
+        table = new Tabulator("#data-table", {
+            data:tableData,
+
+            columns:[
+                {title:"Id", field:"Id"},
+                {title:"Name", field:"Name"},
+                {title:"Marka", field:"Marka.Name"},
+                {title:"Price", field:"Price"},
+                {title:"Features", field:"Features.length"},
+                {title:"Comments", field:"Comments.length"},
+            ],
+
+            height:"70vh",
+        });
+
+    });
+</script>
+
+}

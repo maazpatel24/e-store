@@ -1,0 +1,148 @@
+﻿@using DAL.Entities.Login
+@using WEB.Helpers.Constants
+@using WEB.Models
+
+@inject IHttpContextAccessor iHttpContextAccessor
+
+@{
+    var user = iHttpContextAccessor.HttpContext.Items["User"] as User;
+    var navLinks = NavLinks.GetShowable(user);
+    var navRightLinks = NavLinks.GetShowableRightLinks(user);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WEB</title>
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <!-- Dark MDB theme -->
+    <link rel="stylesheet" href="~/lib/bootstrap-5-dark-theme-main/css/mdb.dark.min.css" />
+    <!-- Regular MDB theme -->
+    <!-- <link rel="stylesheet" href="~/lib/bootstrap-5-dark-theme-main/css/mdb.min.css" /> -->
+
+    <link href="https://unpkg.com/tabulator-tables@5.2.6/dist/css/tabulator.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@5.2.6/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.2.6/dist/js/tabulator.min.js"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WEB.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WEB</a>
+                
+                <button class="navbar-toggler collapsed" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="navbar-collapse collapse" id="navbarColor02" style="">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        @foreach (var item in navLinks)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="@item.Area" asp-controller="@item.Controller" asp-action="@item.Action">@item.Title</a>
+                            </li>
+                        }
+                        @*<li class="nav-item active">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Explore">Explore</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Markas" asp-action="Index">Markas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
+                        </li>*@
+                    </ul>
+
+                    <!-- Right elements -->
+                    @if (navRightLinks.Count > 0)
+                    {
+                        <div class="d-flex align-items-center">
+                            <!-- Avatar -->
+                            <div class="dropdown">
+                                <a class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                                   href="#"
+                                   id="navbarDropdownMenuAvatar"
+                                   role="button"
+                                   data-mdb-toggle="dropdown"
+                                   aria-expanded="false">
+                                    <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                                         class="rounded-circle"
+                                         height="25"
+                                         alt="Black and White Portrait of a Man"
+                                         loading="lazy" />
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end"
+                                    aria-labelledby="navbarDropdownMenuAvatar">
+                                    
+                                    @foreach (var item in navRightLinks)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="@item.Area" asp-controller="@item.Controller" asp-action="@item.Action">@item.Title</a>
+                                        </li>
+                                    }
+
+                                    @*<li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
+                                    </li>*@
+                                    <li>
+                                        <a class="dropdown-item" onclick="$('#logout-form').submit()" href="#">Logout</a>
+                                        @*<a class="dropdown-item" asp-area="" asp-controller="Users" asp-action="Signout">Logout</a>*@
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="RegisterLogin">Register / Login</a>
+                            </ul>
+                        </div>
+                    }
+                    <!-- Right elements -->
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - WEB - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <form class="d-none" id="logout-form" method="post" asp-area="" asp-controller="Users" asp-action="Logout">
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <!-- MDB -->
+    <script type="text/javascript" src="~/lib/bootstrap-5-dark-theme-main/js/mdb.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

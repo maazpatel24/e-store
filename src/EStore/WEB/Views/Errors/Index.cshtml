@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Error " + ViewData["Code"];
+    var img = $"{ViewData["Code"]}.png";
+}
+
+<style>
+    .error-text {
+        margin: 3rem auto;
+        display: table;
+        color: #646464;
+    }
+    .error-img {
+        display: block;
+        margin: 10% auto 0;
+        max-width: 512px;
+        max-height: 512px;
+    }
+</style>
+
+<h1 class="error-text">ERROR @ViewData["Code"]</h1>
+
+<img class="error-img" src="~/img/@img" />
