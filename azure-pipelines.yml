@@ -6,8 +6,7 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'ubuntu-latest'
+pool: MAAZ
 
 stages:
   - stage: A
